@@ -48,6 +48,7 @@
 #include <optional>
 #include <set>
 #include <unordered_map>
+#include <glm/gtx/string_cast.hpp>
 
 
 const std::string m_MODEL_PATH = "models/viking_room.obj";
@@ -298,7 +299,9 @@ private:
 
 	//This holds all information an object with texture needs!
 	struct Object {
+         
 		UniformBufferObject m_ubo; //holds model, view and proj matrix
+        std::string name; //every object need an id, so i can play with them
 		UniformBuffers m_uniformBuffers;
 		Texture m_texture;
 		Geometry m_geometry;
@@ -333,7 +336,7 @@ private:
     std::unordered_map<SDL_Keycode, bool> whichKeyPressed;
     float thecameraYaw = 0.0f;
     float thecameraPitch = 0.0f;
-    glm::vec3 m_cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f); //starting from 0 0 0 
+    glm::vec3 m_cameraPosition = glm::vec3(0.0f, 0.0f, 1.5f); //starting from 0 0 0 
     glm::vec3 m_cameraFrontalView = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f)); //same here 
     glm::vec3 m_cameraUp = glm::vec3(0.0f, 0.0f, 1.0f); //so the camera knows the up èart
 
@@ -365,11 +368,13 @@ private:
 
 
     //on this, i just add the selection of the pipeline that i'm gonna use
-	void createObject( VkPhysicalDevice physicalDevice, VkDevice device, VmaAllocator vmaAllocator,
+    //in create object i add the name
+	void createObject(const std::string& name, VkPhysicalDevice physicalDevice, VkDevice device, VmaAllocator vmaAllocator,
 			VkQueue graphicsQueue, VkCommandPool commandPool, VkDescriptorPool descriptorPool, VkDescriptorSetLayout descriptorSetLayout,
 			glm::mat4&& model, std::string modelPath, std::string texturePath, Pipeline pipeline, std::vector<Object>& objects) {
 
 		Object object{{model}};
+        object.name = name;
 		createTextureImage(physicalDevice, device, vmaAllocator, graphicsQueue, commandPool, texturePath, object.m_texture);
         createTextureImageView(device, object.m_texture);
         createTextureSampler(physicalDevice, device, object.m_texture);
@@ -383,7 +388,7 @@ private:
         createDescriptorSets(device, object.m_texture, descriptorSetLayout, object.m_uniformBuffers, descriptorPool, object.m_descriptorSets);
         
         //i pass to create object the pipeline struct and i put inside the field of m_pipelinelayout and m_pipeline
-
+        
         object.m_pipeline_o = pipeline.m_pipeline; //yess i'm adding this to the field of the struct object because i added it
         object.m_pipelineLayout_o = pipeline.m_pipelineLayout; 
 
@@ -444,6 +449,19 @@ private:
     }
 
 
+        const float c_max_time = 40.0f;
+        const int c_field_size = 5000;
+        const int c_number_cubes = 10;
+
+        int nextRandom() {
+            return rand() % (c_field_size) - c_field_size/2;
+        }
+
+        int nextRandomBombHeight(){ //generate an height for the bomb
+            return rand()% 10 + 10;
+        }
+
+
     void initVulkan() {
 
 
@@ -479,26 +497,33 @@ private:
         // x, y, z su giù, avanti indietro, destra sinistra
 
         //this is the cube - old pipeline
-		createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.90f, 0.90f, 0.90f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.0f, 0.0f, 0.0f)), "models/cube.obj", "textures/cube3.png", pipeline_with_fill, m_objects);
+		//createObject("cube_1", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.90f, 0.90f, 0.90f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.0f, 0.0f, 0.0f)), "models/cube.obj", "textures/cube3.png", pipeline_with_fill, m_objects);
 
-
+        createObject("present", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.50f, 0.50f, 0.50f)), glm::radians(90.0f), glm::vec3(0.0f, 2.0f, 0.0f)), glm::vec3(-1.0f, 0.0f, 0.0f)), "models/gift_box.obj", "textures/gift_texture.jpg", pipeline_with_fill, m_objects);
             //simply copy paste of the same function but i want it to rotate my plane of course so i add glm rotate and i know that i can put those functions together
          
             //always possible to compbine those translate rotate and translate 
 
         //this is the plane - old pipeline
-        createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 10.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(0.0f, -0.01f, 0.0f)), plane_model, m_Grass, pipeline_with_fill, m_objects);
+        createObject("plane",m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 10.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(0.0f, -0.01f, 0.0f)), plane_model, m_Grass, pipeline_with_fill, m_objects);
         
         
         // now the old pipeline for the bomb
-        createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(150.0f, 100.0f, 100.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_fill, m_objects);
+        //createObject("bomb_1", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(150.0f, 100.0f, 100.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_fill, m_objects);
         //the new pipeline wire for the bomb 2
-        createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(200.0f, 120.0f, 200.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_wire, m_objects);
+        //createObject("bomb_2", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(200.0f, 120.0f, 200.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_wire, m_objects);
         //third object for the new pipeline bomb n.3 
-        createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_wire, m_objects);
+        //createObject("bomb_3", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f)), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_wire, m_objects);
         //another cube but this time with the new pipeline and a different texture
-        createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.90f, 0.90f, 0.90f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.0f, 2.50f, 0.0f)), "models/cube.obj", "textures/bump.png", pipeline_with_wire, m_objects);
+        //createObject("cube", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.90f, 0.90f, 0.90f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.0f, 2.50f, 0.0f)), "models/cube.obj", "textures/bump.png", pipeline_with_wire, m_objects);
+       
+        
 
+        for (int i = 0; i<2; i++){
+            createObject("bomb_bad", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(nextRandom(),120.0f, nextRandom())), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_fill, m_objects);
+
+
+        }
 
             //insert the bomb pipeline filled for this other object
 		//createObject(m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool,
@@ -1022,8 +1047,8 @@ private:
     void createGraphicsPipeline(VkDevice device, VkRenderPass renderPass
         , VkDescriptorSetLayout descriptorSetLayout, Pipeline& graphicsPipeline, bool fill_or_line) {
 
-        auto vertShaderCode = readFile("shaders/vert.spv");
-        auto fragShaderCode = readFile("shaders/frag.spv");
+        auto vertShaderCode = readFile("shaders/vert_phong.spv");
+        auto fragShaderCode = readFile("shaders/frag_phong.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(device, vertShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(device, fragShaderCode);
@@ -1878,6 +1903,26 @@ private:
         }
     }
 
+
+    glm::vec3 getPosition(const Object& obj){
+        return glm::vec3(obj.m_ubo.model * glm::vec4(0,0,0,1));
+    }
+
+    void setPosition(Object& obj, const glm::vec3& p){
+        obj.m_ubo.model[3] = glm::vec4(p, 1.0f);
+    }
+
+    
+    int nextRandom_world() {
+            return rand() % (200) - 200/2;
+        }
+
+    int nextRandomBombHeight_world(){ //generate an height for the bomb
+            return rand()% 10 + 6;
+        }
+
+    int contatore = 1000;
+
     void updateUniformBuffer(uint32_t currentImage, SwapChain& swapChain, std::vector<Object>& objects ) {
         static auto startTime = std::chrono::high_resolution_clock::now();
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -1886,33 +1931,42 @@ private:
 
 		for( auto& object : objects ) {
 
+            
+
             //i comment this beacuse i want it to stop rotation
 	        //object.m_ubo.model = glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	        
             //glm cross is giving me the perpendicular of the front and the up, so i can compute with glm cross the diretion of the right 
-            glm::vec3 cameraleftright = glm::normalize(glm::cross(m_cameraFrontalView, m_cameraUp));
+            //glm::vec3 cameraleftright = glm::normalize(glm::cross(m_cameraFrontalView, m_cameraUp));
+            glm::vec3 cameraDirectionFlat = glm::normalize(glm::vec3(m_cameraFrontalView.x, m_cameraFrontalView.y, 0.0f));
+            glm::vec3 cameraleftright = glm::normalize(glm::cross(m_cameraUp, cameraDirectionFlat));
             
             //using the camera speed like this coold always work even without multiplying for the dt, but then for monitor with higher framerate would be 
             //too fast then i'm leaving this constant to this speed
-            float cameraSpeed = 2.5f * dt; // here we have the camera speed 
+            float cameraSpeed = 2.0f * dt; // here we have the camera speed 
 
             //this if they check acutally which key ive pressed, and then they just change the camera position, i could acutally use a switch case
-            if (whichKeyPressed[SDLK_w]) m_cameraPosition +=cameraSpeed * m_cameraFrontalView;
+            //if (whichKeyPressed[SDLK_w]) m_cameraPosition +=cameraSpeed * m_cameraFrontalView;
 
 
-            if (whichKeyPressed[SDLK_s]) m_cameraPosition -=cameraSpeed * m_cameraFrontalView;
+            //if (whichKeyPressed[SDLK_s]) m_cameraPosition -=cameraSpeed * m_cameraFrontalView;
 
-            if (whichKeyPressed[SDLK_a]) m_cameraPosition -=cameraSpeed * cameraleftright;
-            if (whichKeyPressed[SDLK_d]) m_cameraPosition +=cameraSpeed * cameraleftright;
+            //if (whichKeyPressed[SDLK_a]) m_cameraPosition -=cameraSpeed * cameraleftright;
+            //if (whichKeyPressed[SDLK_d]) m_cameraPosition +=cameraSpeed * cameraleftright;
+
+            if (whichKeyPressed[SDLK_w]) m_cameraPosition += cameraSpeed * cameraDirectionFlat;
+            if (whichKeyPressed[SDLK_s]) m_cameraPosition -= cameraSpeed * cameraDirectionFlat;
+            if (whichKeyPressed[SDLK_d]) m_cameraPosition -= cameraSpeed * cameraleftright;
+            if (whichKeyPressed[SDLK_a]) m_cameraPosition += cameraSpeed * cameraleftright;
 
             //manage the camera pitch and yaw witht the keyboard key arrow
-            if (whichKeyPressed[SDLK_UP])  thecameraPitch +=  dt * 50.0f;
-            if (whichKeyPressed[SDLK_DOWN])  thecameraPitch -= dt * 50.0f;
-            if (whichKeyPressed[SDLK_LEFT])  thecameraYaw +=  dt * 50.0f;
-            if (whichKeyPressed[SDLK_RIGHT]) thecameraYaw -=  dt * 50.0f;
+            if (whichKeyPressed[SDLK_UP])  thecameraPitch +=  dt * 20.0f;
+            if (whichKeyPressed[SDLK_DOWN])  thecameraPitch -= dt * 20.0f;
+            if (whichKeyPressed[SDLK_LEFT])  thecameraYaw +=  dt * 20.0f;
+            if (whichKeyPressed[SDLK_RIGHT]) thecameraYaw -=  dt * 20.0f;
 
             // this actually helps to not flip over the top 
-            thecameraPitch = std::clamp(thecameraPitch, -89.0f, 89.0f);
+            thecameraPitch = std::clamp(thecameraPitch, -10.0f, 30.0f);
 
             // here i calculate the camera front dircetion vector 
             glm::vec3 front;
@@ -1927,11 +1981,52 @@ private:
             //classic view matrizx with lookat of glm 
             object.m_ubo.view = glm::lookAt(m_cameraPosition, m_cameraPosition + m_cameraFrontalView, m_cameraUp);
 
-			object.m_ubo.proj = glm::perspective(glm::radians(45.0f), swapChain.m_swapChainExtent.width / (float) swapChain.m_swapChainExtent.height, 0.1f, 10.0f);
+			object.m_ubo.proj = glm::perspective(glm::radians(45.0f), swapChain.m_swapChainExtent.width / (float) swapChain.m_swapChainExtent.height, 0.1f, 500.0f);
 	        object.m_ubo.proj[1][1] *= -1;
+
+            //for the camera position i need to block it when it goes close to the end of the map wich is 100 100 0 and 100 -100 0  and -100 100 and -100 -100
+            m_cameraPosition.x = std::clamp(m_cameraPosition.x, -100.0f, 100.0f);
+            m_cameraPosition.y = std::clamp(m_cameraPosition.y, -100.0f, 100.0f);
             object.m_ubo.cameraPos = glm::vec4(m_cameraPosition, 1.0f);
+            
+            
 
 	        memcpy(object.m_uniformBuffers.m_uniformBuffersMapped[currentImage], &object.m_ubo, sizeof(object.m_ubo));
+            contatore --;
+            
+            if (contatore == 0){ //check the camera position in the world 
+                std::cout << "posi camera: "<< glm::to_string(object.m_ubo.cameraPos) << "\n";
+                contatore = 1000;
+            }
+
+
+
+           
+            //here i manouver the bombs//
+            if (object.name == "bomb_bad") {
+                float offset = dt * 5.0f; 
+                //object.m_ubo.model =  glm::translate(object.m_ubo.model, glm::vec3(0.0f, offset * 0.5f, -offset));
+                glm::vec3 newPos = getPosition(object) + glm::vec3(0.0f, -offset, -offset);
+                setPosition(object, newPos);
+                //glm::translate(glm::mat4(1.0f), glm::vec3(offset, 0.0f, 0.0f))
+                //glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f))
+                //glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f))
+                if(newPos.z < 0.0f){
+                    std::cout << ".... position of bomb X. "<< newPos.x <<  ".Y." << newPos.y <<  ".Z.."<< newPos.z <<  "...."<< "\n";
+                    //glm::vec3 settingpos = getPosition(object) + glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+
+                }
+                glm::vec3 cameraPos3 = glm::vec3(object.m_ubo.cameraPos);
+                if(glm::distance(newPos, cameraPos3) < 3.0f){
+                    std::cout << "Beccatoooooaaaaaaaaa"<< "\n";
+                    
+                }
+                
+                   
+            }
+
 		}
     }
 
