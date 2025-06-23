@@ -461,6 +461,14 @@ private:
             return rand()% 10 + 10;
         }
 
+        int nextRandom_pasqua() {
+            return rand() % (2000) - 2000/2;
+        }
+
+        int nextRandom_tree() {
+            return rand() % (200) - 500/2;
+        }
+
 
     void initVulkan() {
 
@@ -499,10 +507,16 @@ private:
         //this is the cube - old pipeline
 		//createObject("cube_1", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.90f, 0.90f, 0.90f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.0f, 0.0f, 0.0f)), "models/cube.obj", "textures/cube3.png", pipeline_with_fill, m_objects);
 
-        createObject("present", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.50f, 0.50f, 0.50f)), glm::radians(90.0f), glm::vec3(0.0f, 2.0f, 0.0f)), glm::vec3(-1.0f, 0.0f, 0.0f)), "models/gift_box.obj", "textures/gift_texture.jpg", pipeline_with_fill, m_objects);
+        createObject("present", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.10f, 0.10f, 0.10f)), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(nextRandom_pasqua(),nextRandom_pasqua(), 0.1f)), "models/gift_box.obj", "textures/gift_texture.jpg", pipeline_with_fill, m_objects);
+        createObject("balloon", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.50f, 0.50f, 0.50f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(10.0f, 5.0f, 15.0f)), "models/balloon.obj", "textures/balloon_texture.png", pipeline_with_fill, m_objects);
             //simply copy paste of the same function but i want it to rotate my plane of course so i add glm rotate and i know that i can put those functions together
-         
+         createObject("easter", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.01f, 0.01f, 0.01f)), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(nextRandom_pasqua(), nextRandom_pasqua(), -3.0f)), "models/easter.obj", "textures/easter_diffuse.jpg", pipeline_with_fill, m_objects);
             //always possible to compbine those translate rotate and translate 
+
+        //tree
+        createObject("tree", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(50.0f,0.0f, 10.0f)), "models/tree.obj", "textures/tree_color.png", pipeline_with_fill, m_objects);
+        createObject("tree", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(-20.0f,0.0f, -30.0f)), "models/tree.obj", "textures/tree_color.png", pipeline_with_fill, m_objects);
+        createObject("tree", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(10.0f,0.0f, -60.0f)), "models/tree.obj", "textures/tree_color.png", pipeline_with_fill, m_objects);
 
         //this is the plane - old pipeline
         createObject("plane",m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 10.0f)), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(0.0f, -0.01f, 0.0f)), plane_model, m_Grass, pipeline_with_fill, m_objects);
@@ -519,8 +533,13 @@ private:
        
         
 
-        for (int i = 0; i<2; i++){
-            createObject("bomb_bad", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(nextRandom(),120.0f, nextRandom())), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_fill, m_objects);
+        for (int i = 0; i<3; i++){
+            createObject("bomb_bad", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.04f, 0.04f, 0.04f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(nextRandom(),120.0f, nextRandom())), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_fill, m_objects);
+
+
+        }
+        for (int i = 0; i<3; i++){
+            createObject("bomb_time", m_physicalDevice, m_device, m_vmaAllocator, m_graphicsQueue, m_commandPool, m_descriptorPool, m_descriptorSetLayout, glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.04f, 0.04f, 0.04f)), glm::radians(90.0f), glm::vec3(1.0f, 2.0f, 2.0f)), glm::vec3(nextRandom(),120.0f, nextRandom())), "models/bomb_shading_v005.obj", "textures/grunge-wall-texture.jpg", pipeline_with_wire, m_objects);
 
 
         }
@@ -585,14 +604,50 @@ private:
                 ImGui::NewFrame();
 
                 //ImGui::ShowDemoWindow(); // Show demo window! :)
-                ImGui::Begin("Performance Monitor");
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ImGui::Begin("catch all the pasquas");
+                //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ImGui::Text("Pasquas remaining: %d", pasqua_left);
+                ImGui::Text("Time remaining seconds: %d", time_left);
+                ImGui::Text("Speed X%d", (int)speed_multiplier);
                 ImGui::End();
+
+                if(pasqua_left>0){
+                    game_stop = false;
+                    
+
+                }else {
+                     ImGui::Text("🎉 winner! 🎉");
+                     game_stop = true;
+                     if (ImGui::Button("Restart")) {
+                         // Logica di restart: azzera stato, rigenera pasquas ecc.
+                        //ResetGame(); 
+                        
+                        pasqua_left = 10;
+                        time_left = 120;
+                        game_stop = false;
+                     }
+                
+                }
+
+                if(time_left<=0 || hitted){
+                    ImGui::Text(" loser! ");
+                    game_stop = true;
+                    if (ImGui::Button("Restart")) {
+                         // Logica di restart: azzera stato, rigenera pasquas ecc.
+                        //ResetGame(); 
+                        
+                        pasqua_left = 10;
+                        time_left = 120;
+                        game_stop = false;
+                     }
+                }
 
                 drawFrame(m_sdlWindow, m_surface, m_physicalDevice, m_device, m_vmaAllocator
                     , m_graphicsQueue, m_presentQueue, m_swapChain, m_depthImage
                     , m_renderPass, m_graphicsPipeline, m_objects, m_commandBuffers
 					, m_syncObjects, m_currentFrame, m_framebufferResized);
+
+                
             }
         }
         vkDeviceWaitIdle(m_device);
@@ -1914,27 +1969,89 @@ private:
 
     
     int nextRandom_world() {
-            return rand() % (200) - 200/2;
-        }
+        return rand() % 151 - 75;
+    }
 
     int nextRandomBombHeight_world(){ //generate an height for the bomb
-            return rand()% 10 + 6;
+            return rand()% 20 + 9;
         }
 
     int contatore = 1000;
+
+
+
+    //all the positions values 
+
+    
+    glm::vec3 balloon_pos = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 easter_pos = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 tree_pos = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 bomb_pos = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 camera_pos = glm::vec3(0.0f,0.0f,0.0f);
+    float speed_multiplier = 1.0f;
+    bool speed_boost_active = false;
+    std::chrono::high_resolution_clock::time_point speed_boost_start;
+
+    int pasqua_left = 3; //how many pasquas should i collect  
+
+    bool game_stop = false;
+
+    int time_left = 120;
+    bool hitted = false;
+
+    bool is_protected_by_a_tree = false;
+
 
     void updateUniformBuffer(uint32_t currentImage, SwapChain& swapChain, std::vector<Object>& objects ) {
         static auto startTime = std::chrono::high_resolution_clock::now();
         auto currentTime = std::chrono::high_resolution_clock::now();
         float dt = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 		startTime = currentTime;
+        static float second_accumolo = 0.0f;
 
+        if(!game_stop && time_left > 0){
+            second_accumolo = second_accumolo +dt;
+            if(second_accumolo >= 1.0f){ //here is when the entire second pass
+                time_left--;
+                second_accumolo = second_accumolo - 1.0f;
+                if(time_left <=0){
+                    time_left = 0;
+                    
+                }
+
+            }
+
+        }
+            
+
+        if(game_stop){
+            dt = 0.0;
+        }
+
+
+        if (speed_boost_active) {
+            auto now = std::chrono::high_resolution_clock::now();
+            float elapsed = std::chrono::duration<float>(now - speed_boost_start).count();
+
+            if (elapsed > 4.0f) {
+                std::cout << "Boost finito\n";
+                speed_multiplier = 1.0f;
+                speed_boost_active = false;
+            }
+        }
+        
 		for( auto& object : objects ) {
 
             
 
             //i comment this beacuse i want it to stop rotation
-	        //object.m_ubo.model = glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            if(object.name == "present"){
+                object.m_ubo.model = glm::rotate(object.m_ubo.model, dt * 0.5f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            }
+
+
+	        
 	        
             //glm cross is giving me the perpendicular of the front and the up, so i can compute with glm cross the diretion of the right 
             //glm::vec3 cameraleftright = glm::normalize(glm::cross(m_cameraFrontalView, m_cameraUp));
@@ -1943,7 +2060,7 @@ private:
             
             //using the camera speed like this coold always work even without multiplying for the dt, but then for monitor with higher framerate would be 
             //too fast then i'm leaving this constant to this speed
-            float cameraSpeed = 2.0f * dt; // here we have the camera speed 
+            float cameraSpeed = 1.0f * speed_multiplier * dt;
 
             //this if they check acutally which key ive pressed, and then they just change the camera position, i could acutally use a switch case
             //if (whichKeyPressed[SDLK_w]) m_cameraPosition +=cameraSpeed * m_cameraFrontalView;
@@ -2001,8 +2118,148 @@ private:
 
 
 
+
+            ///the game start here: 
+
+            /// //////
+
+            //get the objects position all the time: 
+            
+            
+
+            std::cout << ".... position of balloon X. "<< bomb_pos.x <<  ".Y." << bomb_pos.y <<  ".Z.."<< bomb_pos.z <<  "...."<< "\n";
+
+
+            if(object.name == "present"){
+                glm::vec3 present_pos = getPosition(object);
+                glm::vec3 camera_pos = glm::vec3(object.m_ubo.cameraPos);
+
+                if(glm::distance(present_pos, camera_pos) < 2.0f){
+                    std::cout << "velocità ++" << "\n";
+                    speed_multiplier = 5.0f;
+                    speed_boost_active = true;
+                    speed_boost_start = std::chrono::high_resolution_clock::now();
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), 0.0f);
+                    setPosition(object, settingpos);
+                }
+
+            } 
+
+            if (object.name == "easter"){
+                glm::vec3 easter_pos = getPosition(object);
+                glm::vec3 camera_pos = glm::vec3(object.m_ubo.cameraPos);
+
+                if(glm::distance(easter_pos, camera_pos) < 2.0f){
+
+                    pasqua_left --;
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), 0.0f);
+                    setPosition(object, settingpos);
+                }
+
+
+            }
+
+            if (object.name == "bomb_time") {
+                float offset = dt * 5.0f; 
+                //object.m_ubo.model =  glm::translate(object.m_ubo.model, glm::vec3(0.0f, offset * 0.5f, -offset));
+                glm::vec3 newPos = getPosition(object) + glm::vec3(0.0f, -offset, -offset);
+                setPosition(object, newPos);
+                //glm::translate(glm::mat4(1.0f), glm::vec3(offset, 0.0f, 0.0f))
+                //glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f))
+                //glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f))
+                if(newPos.z < 0.0f){
+                    //std::cout << ".... position of bomb X. "<< newPos.x <<  ".Y." << newPos.y <<  ".Z.."<< newPos.z <<  "...."<< "\n";
+                    //glm::vec3 settingpos = getPosition(object) + glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+
+                }
+                glm::vec3 cameraPos3 = glm::vec3(object.m_ubo.cameraPos);
+                if(glm::distance(newPos, cameraPos3) < 3.5f){
+                    std::cout << "meno time"<< "\n";
+                    time_left = time_left - 10;
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+                    
+                }
+                
+                   
+            }
+
+            if (object.name == "tree"){
+                glm::vec3 easter_pos = getPosition(object);
+                glm::vec3 camera_pos = glm::vec3(object.m_ubo.cameraPos);
+
+                if(glm::distance(easter_pos, camera_pos) < 2.0f){
+
+                    is_protected_by_a_tree = true;
+                    
+                }else{
+
+                    is_protected_by_a_tree = false;
+                }
+
+
+            }
+
+
+            
+
+
+
+                
+
+
+
+
+
+
+
+
+            if (object.name == "balloon") {
+                float offset = dt * 2.0f; 
+                //object.m_ubo.model =  glm::translate(object.m_ubo.model, glm::vec3(0.0f, offset * 0.5f, -offset));
+                glm::vec3 newPos = getPosition(object) + glm::vec3(0.0f, -offset, -offset);
+                setPosition(object, newPos);
+                //glm::translate(glm::mat4(1.0f), glm::vec3(offset, 0.0f, 0.0f))
+                //glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f))
+                //glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f))
+                if(newPos.z < 0.0f){
+                    //std::cout << ".... position of balloon X. "<< newPos.x <<  ".Y." << newPos.y <<  ".Z.."<< newPos.z <<  "...."<< "\n";
+                    //glm::vec3 settingpos = getPosition(object) + glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+
+                }
+                glm::vec3 cameraPos3 = glm::vec3(object.m_ubo.cameraPos);
+                if(glm::distance(newPos, cameraPos3) < 3.0f){
+                    std::cout << "regalo di tempo"<< "\n";
+                    time_left = time_left + 10; //add time if hitted by a balloon
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+                    
+                }
+            
+                
+                   
+            }
+
+
+
+
+
+
+
+
+
+
+
            
             //here i manouver the bombs//
+
+
+
+
             if (object.name == "bomb_bad") {
                 float offset = dt * 5.0f; 
                 //object.m_ubo.model =  glm::translate(object.m_ubo.model, glm::vec3(0.0f, offset * 0.5f, -offset));
@@ -2012,22 +2269,29 @@ private:
                 //glm::rotate(object.m_ubo.model, dt * 1.0f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f))
                 //glm::translate(glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f)), glm::radians(90.0f), glm::vec3(1.0f, 2.5f, 2.0f)), glm::vec3(50.0f, 120.0f, 200.0f))
                 if(newPos.z < 0.0f){
-                    std::cout << ".... position of bomb X. "<< newPos.x <<  ".Y." << newPos.y <<  ".Z.."<< newPos.z <<  "...."<< "\n";
+                    //std::cout << ".... position of bomb X. "<< newPos.x <<  ".Y." << newPos.y <<  ".Z.."<< newPos.z <<  "...."<< "\n";
                     //glm::vec3 settingpos = getPosition(object) + glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
                     glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
                     setPosition(object, settingpos);
 
                 }
                 glm::vec3 cameraPos3 = glm::vec3(object.m_ubo.cameraPos);
-                if(glm::distance(newPos, cameraPos3) < 3.0f){
+                if(glm::distance(newPos, cameraPos3) < 3.0f ){
                     std::cout << "Beccatoooooaaaaaaaaa"<< "\n";
+                    
+                    glm::vec3 settingpos = glm::vec3(nextRandom_world(),nextRandom_world(), nextRandomBombHeight_world());
+                    setPosition(object, settingpos);
+                    hitted = true;
                     
                 }
                 
                    
             }
 
+
+
 		}
+        auto seconds_timer = std::chrono::high_resolution_clock::now();
     }
 
     void drawFrame(SDL_Window* window, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice
@@ -2048,8 +2312,10 @@ private:
         } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
-
+        
         updateUniformBuffer(currentFrame, swapChain, objects);
+        
+        
 
         vkResetFences(device, 1, &syncObjects.m_inFlightFences[currentFrame]);
 
@@ -2089,6 +2355,7 @@ private:
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(presentQueue, &presentInfo);
+        
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
             framebufferResized = false;
